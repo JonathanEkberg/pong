@@ -37,15 +37,18 @@ fn main() {
             },
             ..default()
         })
-        .add_event::<ScoreEvent>()
         .add_plugins(DefaultPlugins)
-        .add_plugin(plugins::fps::ScreenDiagsPlugin)
         .insert_resource(ClearColor(Color::rgb(0.0, 0.0, 0.0)))
         .add_startup_system(setup)
-        .add_system(paddle::move_paddle)
-        .add_system(ball::ball_movement)
-        .add_system(collision::handle_collisions)
-        .add_system(handle_score)
+        .add_plugin(plugins::fps::ScreenDiagsPlugin)
+        .add_event::<ScoreEvent>()
+        .add_system_set(
+            SystemSet::new()
+                .with_system(paddle::move_paddle)
+                .with_system(ball::ball_movement.after(paddle::move_paddle))
+                .with_system(collision::handle_collisions.after(ball::ball_movement))
+                .with_system(handle_score.after(collision::handle_collisions)),
+        )
         .run();
 }
 
