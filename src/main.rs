@@ -1,23 +1,56 @@
+mod paddle;
+mod plugins;
+
 use bevy::{
-    prelude::*
+    prelude::*,
+    window::{PresentMode, WindowMode, WindowResizeConstraints},
 };
-
-#[derive(Component)]
-struct Paddle;
-
-#[derive(Component)]
-struct Collider;
+use paddle::Paddle;
 
 fn main() {
-    App::new().add_plugins(DefaultPlugins).insert_resource(ClearColor(Color::rgb(0.0, 0.0, 0.0))).add_startup_system(setup).run();
+    App::new()
+        .insert_resource(WindowDescriptor {
+            title: "Pong".to_string(),
+            present_mode: PresentMode::AutoVsync,
+            mode: WindowMode::BorderlessFullscreen,
+            resizable: true,
+            resize_constraints: WindowResizeConstraints {
+                min_width: 800.0,
+                min_height: 450.0,
+                ..default()
+            },
+            ..default()
+        })
+        .add_plugins(DefaultPlugins)
+        .add_plugin(plugins::fps::ScreenDiagsPlugin)
+        .insert_resource(ClearColor(Color::rgb(0.0, 0.0, 0.0)))
+        .add_startup_system(setup)
+        .add_system(paddle::move_paddle)
+        .run();
 }
 
-fn setup(mut commands: Commands, asset_server: Res<AssetServer>) {
+fn setup(mut commands: Commands, asset_server: Res<AssetServer>, windows: Res<Windows>) {
+    let (mut width, mut height) = (0.0f32, 0.0f32);
+
+    for window in windows.iter() {
+        (width, height) = (window.width(), window.height());
+        println!("width: {:?}, height: {:?}", width, height);
+    }
+
     commands.spawn_bundle(Camera2dBundle::default());
-    
-    commands.spawn().insert(Paddle).insert_bundle(SpriteBundle {
-        transform: Transform { translation: Vec3::new(0.0, 0.0, 0.0), scale: Vec3::new(120.0, 360.0, 0.0), ..default() },
-        sprite: Sprite {color: Color::rgb(1.0, 1.0, 1.0), ..default()},
-        ..default()
-    }).insert(Collider);
+
+    Paddle::create(
+        &mut commands,
+        paddle::PaddlePosition::LEFT,
+        true,
+        width,
+        height,
+    );
+    Paddle::create(
+        &mut commands,
+        paddle::PaddlePosition::RIGHT,
+        false,
+        width,
+        height,
+    );
 }
