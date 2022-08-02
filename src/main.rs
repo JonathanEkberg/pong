@@ -15,7 +15,22 @@ use wall::Wall;
 #[derive(Component)]
 pub struct Velocity(pub Vec2);
 
-#[derive(Clone, Copy)]
+#[derive(Component)]
+pub struct Score {
+    pub player: usize,
+    pub enemy: usize,
+}
+
+impl Default for Score {
+    fn default() -> Self {
+        Score {
+            player: 0,
+            enemy: 0,
+        }
+    }
+}
+
+#[derive(PartialEq, Eq, Clone, Copy)]
 pub enum Side {
     PLAYER,
     ENEMY,
@@ -39,6 +54,7 @@ fn main() {
         })
         .add_plugins(DefaultPlugins)
         .insert_resource(ClearColor(Color::rgb(0.0, 0.0, 0.0)))
+        .insert_resource(Score::default())
         .add_startup_system(setup)
         .add_plugin(plugins::fps::ScreenDiagsPlugin)
         .add_event::<ScoreEvent>()
@@ -79,6 +95,9 @@ fn spawn_moveables(mut commands: &mut Commands, screen_width: f32, screen_height
     Ball::create(&mut commands);
 }
 
+#[derive(Component)]
+struct ScoreboardTextTag;
+
 fn setup(mut commands: Commands, asset_server: Res<AssetServer>, windows: Res<Windows>) {
     let (mut width, mut height) = get_screen_dimensions(&windows);
 
@@ -87,6 +106,39 @@ fn setup(mut commands: Commands, asset_server: Res<AssetServer>, windows: Res<Wi
     spawn_moveables(&mut commands, width, height);
 
     Wall::create_walls(&mut commands, width, height);
+
+    commands
+        .spawn_bundle(NodeBundle {
+            color: Color::NONE.into(),
+            style: Style {
+                position_type: PositionType::Absolute,
+                size: Size::new(Val::Percent(100.0), Val::Percent(100.0)),
+                display: Display::Flex,
+                flex_direction: FlexDirection::Row,
+                justify_content: JustifyContent::Center,
+                align_items: AlignItems::FlexStart,
+                ..default()
+            },
+            ..default()
+        })
+        .with_children(|parent| {
+            parent
+                .spawn_bundle(
+                    TextBundle::from_sections([TextSection::new(
+                        "0  -  0",
+                        TextStyle {
+                            font_size: 64.0,
+                            font: asset_server.load("fonts/JetBrainsMono-Medium.ttf"),
+                            ..default()
+                        },
+                    )])
+                    .with_style(Style {
+                        margin: UiRect::new(Val::Auto, Val::Auto, Val::Percent(5.0), Val::Auto),
+                        ..default()
+                    }),
+                )
+                .insert(ScoreboardTextTag);
+        });
 }
 
 fn handle_score(
@@ -94,8 +146,13 @@ fn handle_score(
     mut ev_score: EventReader<ScoreEvent>,
     mut paddle_query: Query<Entity, With<Paddle>>,
     mut ball_query: Query<Entity, With<Ball>>,
+    mut score: ResMut<Score>,
+    mut text_query: Query<&mut Text, With<ScoreboardTextTag>>,
     windows: Res<Windows>,
 ) {
+    let mut text = text_query.single_mut();
+    text.sections[0].value = format!("{}  -  {}", score.player, score.enemy);
+
     if ev_score.is_empty() {
         return;
     }
@@ -109,4 +166,12 @@ fn handle_score(
     }
 
     spawn_moveables(&mut commands, width, height);
+
+    for score_event in ev_score.iter() {
+        if score_event.0 == Side::ENEMY {
+            score.enemy += 1;
+        } else {
+            score.player += 1;
+        }
+    }
 }
