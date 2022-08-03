@@ -3,23 +3,21 @@ name: Compilation
 on: [push, pull_request]
 
 jobs:
-  simple:
-    strategy:
-      fail-fast: false
-      matrix:
-        os: [macos-latest, windows-latest]
-
-    name: Test `cargo check/test` on ${{ matrix.os }}
-    runs-on: ${{ matrix.os }}
-
-    env:
-      CARGO_TERM_COLOR: always
+  build:
+    runs-on: windows-latest
 
     steps:
-      - uses: actions/checkout@v3
+    - uses: actions/checkout@v2
 
-      - run: rustup toolchain install stable --profile minimal
+    - uses: actions/cache@v2
+      with:
+        path: |
+          ~/.cargo/registry
+          ~/.cargo/git
+          target
+        key: ${{ runner.os }}-cargo-${{ hashFiles('**/Cargo.lock') }}
 
-      - run: |
-          cargo check
-          cargo test
+    - name: Run Build
+      run: cargo build --verbose --all --features "strict"
+    - name: Run Check
+      run: cargo check --verbose --all --features "strict"
