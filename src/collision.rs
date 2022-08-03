@@ -1,4 +1,8 @@
-use crate::{wall::Scoreable, Ball, ScoreEvent, Side, Velocity};
+use crate::{
+    score::{self, ScoreEvent},
+    wall::Scoreable,
+    Ball, Side, Velocity,
+};
 use bevy::{
     prelude::*,
     sprite::collide_aabb::{collide, Collision},
@@ -24,7 +28,7 @@ pub fn handle_collisions(
             transform.scale.truncate(),
         ) {
             if let Some(score) = scoreable {
-                ev_score.send(ScoreEvent(score.0));
+                ev_score.send(score::ScoreEvent(score.0));
             }
 
             let mut flip_y = false;
