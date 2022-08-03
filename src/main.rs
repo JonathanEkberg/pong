@@ -10,7 +10,7 @@ use bevy::{
     prelude::*,
     window::{PresentMode, WindowMode, WindowResizeConstraints},
 };
-use paddle::{Paddle, Player};
+use paddle::Paddle;
 use score::{Score, ScoreEvent};
 use wall::Wall;
 
@@ -54,7 +54,7 @@ fn main() {
 }
 
 fn get_screen_dimensions(windows: &Res<Windows>) -> (f32, f32) {
-    let (mut width, mut height) = (0.0f32, 0.0f32);
+    let (mut width, mut height) = (0., 0.);
 
     for window in windows.iter() {
         (width, height) = (window.width(), window.height());
@@ -63,7 +63,7 @@ fn get_screen_dimensions(windows: &Res<Windows>) -> (f32, f32) {
     (width, height)
 }
 
-fn spawn_moveables(mut commands: &mut Commands, screen_width: f32, screen_height: f32) {
+fn spawn_moveables(mut commands: &mut Commands, screen_width: f32) {
     Paddle::create(
         &mut commands,
         paddle::PaddlePosition::LEFT,
@@ -84,10 +84,10 @@ fn spawn_moveables(mut commands: &mut Commands, screen_width: f32, screen_height
 pub struct ScoreboardTextTag;
 
 fn setup(mut commands: Commands, asset_server: Res<AssetServer>, windows: Res<Windows>) {
-    let (mut width, mut height) = get_screen_dimensions(&windows);
+    let (width, height) = get_screen_dimensions(&windows);
 
     commands.spawn_bundle(Camera2dBundle::default());
-    spawn_moveables(&mut commands, width, height);
+    spawn_moveables(&mut commands, width);
     Wall::create_walls(&mut commands, width, height);
     score::spawn_scoreboard_text(&mut commands, &asset_server);
 }

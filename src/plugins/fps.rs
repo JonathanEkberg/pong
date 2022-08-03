@@ -49,25 +49,6 @@ impl Default for ScreenDiagsState {
     }
 }
 
-impl ScreenDiagsState {
-    /// Enable the FPS display.
-    pub fn enable(&mut self) {
-        self.timer.unpause();
-        self.update_now = true;
-    }
-
-    /// Disable the FPS display.
-    pub fn disable(&mut self) {
-        self.timer.pause();
-        self.update_now = true;
-    }
-
-    /// Is the FPS display enabled.
-    pub fn enabled(&self) -> bool {
-        !self.timer.paused()
-    }
-}
-
 /// The marker on the text to be updated.
 #[derive(Component)]
 pub struct ScreenDiagsText;

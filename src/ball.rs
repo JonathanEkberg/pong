@@ -40,7 +40,7 @@ impl Ball {
 
 pub fn ball_movement(time: Res<Time>, mut query: Query<(&mut Transform, &Velocity), With<Ball>>) {
     let delta = time.delta_seconds();
-    let (mut trans, mut vel) = query.single_mut();
+    let (mut trans, vel) = query.single_mut();
 
     trans.translation.x += vel.0.x * delta;
     trans.translation.y += vel.0.y * delta;

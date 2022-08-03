@@ -22,8 +22,8 @@ impl Default for Score {
 pub fn handle_score(
     mut commands: Commands,
     mut ev_score: EventReader<ScoreEvent>,
-    mut paddle_query: Query<Entity, With<Paddle>>,
-    mut ball_query: Query<Entity, With<Ball>>,
+    paddle_query: Query<Entity, With<Paddle>>,
+    ball_query: Query<Entity, With<Ball>>,
     mut score: ResMut<Score>,
     mut text_query: Query<&mut Text, With<ScoreboardTextTag>>,
     windows: Res<Windows>,
@@ -35,7 +35,7 @@ pub fn handle_score(
         return;
     }
 
-    let (mut width, mut height) = crate::get_screen_dimensions(&windows);
+    let (width, _) = crate::get_screen_dimensions(&windows);
 
     commands.entity(ball_query.single()).despawn();
 
@@ -43,7 +43,7 @@ pub fn handle_score(
         commands.entity(paddle).despawn();
     }
 
-    spawn_moveables(&mut commands, width, height);
+    spawn_moveables(&mut commands, width);
 
     for score_event in ev_score.iter() {
         if score_event.0 == Side::ENEMY {
