@@ -73,23 +73,21 @@ pub fn player_input(
     let delta = time.delta_seconds();
     let mut vel = query.single_mut();
 
-    let mut y_velocity = vel.0.y;
-
     let up_pressed = keyboard_input.pressed(KeyCode::W);
     let down_pressed = keyboard_input.pressed(KeyCode::S);
 
-    match up_pressed ^ down_pressed {
-        true => {
-            if up_pressed {
-                y_velocity = util::lerp(y_velocity, MAX_SPEED, ACCELERATION * delta);
+    vel.0.y = util::lerp(
+        vel.0.y,
+        match up_pressed ^ down_pressed {
+            true => {
+                if down_pressed {
+                    -MAX_SPEED
+                } else {
+                    MAX_SPEED
+                }
             }
-
-            if down_pressed {
-                y_velocity = util::lerp(y_velocity, -MAX_SPEED, ACCELERATION * delta);
-            }
-        }
-        false => y_velocity = util::lerp(y_velocity, 0., ACCELERATION * delta),
-    }
-
-    vel.0.y = y_velocity
+            false => 0.,
+        },
+        ACCELERATION * delta,
+    );
 }
