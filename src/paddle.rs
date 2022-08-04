@@ -78,15 +78,14 @@ pub fn player_input(
 
     vel.0.y = util::lerp(
         vel.0.y,
-        match up_pressed ^ down_pressed {
-            true => {
-                if down_pressed {
-                    -MAX_SPEED
-                } else {
-                    MAX_SPEED
-                }
+        if up_pressed ^ down_pressed {
+            if down_pressed {
+                -MAX_SPEED
+            } else {
+                MAX_SPEED
             }
-            false => 0.,
+        } else {
+            0.
         },
         ACCELERATION * delta,
     );
