@@ -1,3 +1,4 @@
+mod ai;
 mod ball;
 mod collision;
 mod paddle;
@@ -6,6 +7,7 @@ mod score;
 mod util;
 mod wall;
 
+use ai::enemy_movement;
 use ball::Ball;
 use bevy::{
     prelude::*,
@@ -50,7 +52,8 @@ fn main() {
                 .with_system(paddle::player_input)
                 // .with_system(ball::ball_movement.after(paddle::player_input))
                 .with_system(collision::handle_collisions.after(paddle::player_input))
-                .with_system(move_moveables.after(collision::handle_collisions))
+                .with_system(enemy_movement.after(collision::handle_collisions))
+                .with_system(move_moveables.after(enemy_movement))
                 .with_system(score::handle_score.after(move_moveables)),
         )
         .run();

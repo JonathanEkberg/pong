@@ -3,8 +3,8 @@ use bevy::prelude::*;
 use crate::collision::Collider;
 use crate::{util, Velocity};
 
-const MAX_SPEED: f32 = 400.0;
-const ACCELERATION: f32 = MAX_SPEED / 20.0;
+pub const PADDLE_MAX_SPEED: f32 = 400.0;
+pub const PADDLE_ACCELERATION: f32 = PADDLE_MAX_SPEED / 20.0;
 
 const PADDLE_WIDTH: f32 = 30.0;
 const PADDLE_HEIGHT: f32 = 200.0;
@@ -78,7 +78,8 @@ pub fn player_input(
 
     vel.0.y = util::lerp(
         vel.0.y,
-        (if up_pressed { MAX_SPEED } else { 0. } + if down_pressed { -MAX_SPEED } else { 0. }),
-        ACCELERATION * delta,
+        if up_pressed { PADDLE_MAX_SPEED } else { 0. }
+            + if down_pressed { -PADDLE_MAX_SPEED } else { 0. },
+        PADDLE_ACCELERATION * delta,
     );
 }
