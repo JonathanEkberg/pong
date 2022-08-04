@@ -1,7 +1,7 @@
 use bevy::prelude::*;
 
 use crate::collision::Collider;
-use crate::Velocity;
+use crate::{util, Velocity};
 
 const MAX_SPEED: f32 = 400.0;
 const ACCELERATION: f32 = MAX_SPEED / 20.0;
@@ -65,41 +65,31 @@ impl Paddle {
     }
 }
 
-pub fn move_paddle(
+pub fn player_input(
     time: Res<Time>,
     keyboard_input: Res<Input<KeyCode>>,
-    mut query: Query<(&mut Transform, &mut Velocity), With<Player>>,
+    mut query: Query<&mut Velocity, With<Player>>,
 ) {
     let delta = time.delta_seconds();
-    let (mut trans, mut vel) = query.single_mut();
+    let mut vel = query.single_mut();
 
     let mut y_velocity = vel.0.y;
 
     let up_pressed = keyboard_input.pressed(KeyCode::W);
     let down_pressed = keyboard_input.pressed(KeyCode::S);
 
-    if up_pressed || down_pressed {
-        if up_pressed {
-            y_velocity += ACCELERATION;
-        }
+    match up_pressed ^ down_pressed {
+        true => {
+            if up_pressed {
+                y_velocity = util::lerp(y_velocity, MAX_SPEED, ACCELERATION * delta);
+            }
 
-        if down_pressed {
-            y_velocity -= ACCELERATION;
-        }
-    } else {
-        // Slowly decrease velocity
-        if y_velocity != 0.0 {
-            if y_velocity > 0.0 {
-                y_velocity -= ACCELERATION;
-                y_velocity = y_velocity.clamp(0.0, MAX_SPEED);
-            } else {
-                y_velocity += ACCELERATION;
-                y_velocity = y_velocity.clamp(-MAX_SPEED, 0.0);
+            if down_pressed {
+                y_velocity = util::lerp(y_velocity, -MAX_SPEED, ACCELERATION * delta);
             }
         }
+        false => y_velocity = util::lerp(y_velocity, 0., ACCELERATION * delta),
     }
 
-    vel.0.y = y_velocity.clamp(-MAX_SPEED, MAX_SPEED);
-
-    trans.translation.y += vel.0.y * delta;
+    vel.0.y = y_velocity
 }

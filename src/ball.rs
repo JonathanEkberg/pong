@@ -3,7 +3,7 @@ use bevy::prelude::*;
 use crate::{collision::Collider, Velocity};
 
 const BALL_SIZE: f32 = 20.0;
-const BALL_SPEED: f32 = 400.0;
+const BALL_SPEED: f32 = 500.0;
 
 #[derive(Component)]
 pub struct Ball;
@@ -36,12 +36,4 @@ impl Ball {
             .insert(Collider)
             .insert(Velocity(vel));
     }
-}
-
-pub fn ball_movement(time: Res<Time>, mut query: Query<(&mut Transform, &Velocity), With<Ball>>) {
-    let delta = time.delta_seconds();
-    let (mut trans, vel) = query.single_mut();
-
-    trans.translation.x += vel.0.x * delta;
-    trans.translation.y += vel.0.y * delta;
 }

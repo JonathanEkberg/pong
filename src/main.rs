@@ -3,6 +3,7 @@ mod collision;
 mod paddle;
 mod plugins;
 mod score;
+mod util;
 mod wall;
 
 use ball::Ball;
@@ -12,6 +13,7 @@ use bevy::{
 };
 use paddle::Paddle;
 use score::{Score, ScoreEvent};
+use util::get_screen_dimensions;
 use wall::Wall;
 
 #[derive(Component)]
@@ -45,22 +47,13 @@ fn main() {
         .add_event::<ScoreEvent>()
         .add_system_set(
             SystemSet::new()
-                .with_system(paddle::move_paddle)
-                .with_system(ball::ball_movement.after(paddle::move_paddle))
-                .with_system(collision::handle_collisions.after(ball::ball_movement))
-                .with_system(score::handle_score.after(collision::handle_collisions)),
+                .with_system(paddle::player_input)
+                // .with_system(ball::ball_movement.after(paddle::player_input))
+                .with_system(collision::handle_collisions.after(paddle::player_input))
+                .with_system(move_moveables.after(collision::handle_collisions))
+                .with_system(score::handle_score.after(move_moveables)),
         )
         .run();
-}
-
-fn get_screen_dimensions(windows: &Res<Windows>) -> (f32, f32) {
-    let (mut width, mut height) = (0., 0.);
-
-    for window in windows.iter() {
-        (width, height) = (window.width(), window.height());
-    }
-
-    (width, height)
 }
 
 fn spawn_moveables(mut commands: &mut Commands, screen_width: f32) {
@@ -90,4 +83,16 @@ fn setup(mut commands: Commands, asset_server: Res<AssetServer>, windows: Res<Wi
     spawn_moveables(&mut commands, width);
     Wall::create_walls(&mut commands, width, height);
     score::spawn_scoreboard_text(&mut commands, &asset_server);
+}
+
+/// Applies all entities Velocity component values to its Transform component.
+fn move_moveables(
+    time: Res<Time>,
+    mut moveable_query: Query<(&mut Transform, &Velocity), With<Velocity>>,
+) {
+    let delta = time.delta_seconds();
+    for (mut transform, velocity) in moveable_query.iter_mut() {
+        transform.translation.x += velocity.0.x * delta;
+        transform.translation.y += velocity.0.y * delta;
+    }
 }
