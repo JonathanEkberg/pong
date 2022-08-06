@@ -59,7 +59,7 @@ pub struct ScoreboardTextTag;
 fn setup(mut commands: Commands, asset_server: Res<AssetServer>, windows: Res<Windows>) {
     let (width, height) = get_screen_dimensions(&windows);
 
-    commands.spawn_bundle(Camera2dBundle::default());
+    // commands.spawn_bundle(Camera2dBundle::default());
     spawn_moveables(&mut commands, width);
     Wall::create_walls(&mut commands, width, height);
     score::spawn_scoreboard_text(&mut commands, &asset_server);

@@ -1,9 +1,11 @@
+mod font;
 mod game;
 mod menu;
 mod plugins;
 mod util;
 
 use bevy::{
+    app::AppExit,
     prelude::*,
     window::{PresentMode, WindowMode, WindowResizeConstraints},
 };
@@ -43,6 +45,7 @@ fn main() {
         })
         .add_state(AppState::Menu)
         .add_startup_system(setup)
+        .add_system(exit_on_escape)
         .add_plugins(DefaultPlugins)
         // Fps counter
         .add_plugin(plugins::fps::ScreenDiagsPlugin)
@@ -53,4 +56,10 @@ fn main() {
 
 fn setup(mut commands: Commands) {
     commands.spawn_bundle(Camera2dBundle::default());
+}
+
+fn exit_on_escape(keys: Res<Input<KeyCode>>, mut exit: EventWriter<AppExit>) {
+    if keys.pressed(KeyCode::Escape) {
+        exit.send(AppExit);
+    }
 }
