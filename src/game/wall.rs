@@ -1,6 +1,8 @@
 use bevy::prelude::*;
 
-use crate::{collision::Collider, Side, Velocity};
+use crate::{Side, Velocity};
+
+use super::collision::Collider;
 
 #[derive(Component)]
 pub struct Wall;

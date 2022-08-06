@@ -1,6 +1,8 @@
 use bevy::prelude::*;
 
-use crate::{ball::Ball, paddle::Paddle, spawn_moveables, ScoreboardTextTag, Side};
+use crate::Side;
+
+use super::{ball::Ball, paddle::Paddle, spawn_moveables, ScoreboardTextTag};
 
 pub struct ScoreEvent(pub Side);
 

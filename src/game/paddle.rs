@@ -1,7 +1,8 @@
 use bevy::prelude::*;
 
-use crate::collision::Collider;
 use crate::{util, Velocity};
+
+use super::collision::Collider;
 
 pub const PADDLE_MAX_SPEED: f32 = 500.0;
 pub const PADDLE_ACCELERATION: f32 = PADDLE_MAX_SPEED / 20.0;
