@@ -1,6 +1,9 @@
 use bevy::prelude::*;
 
-use crate::Side;
+use crate::{
+    font::{self, Fonts, MenuFontWeight},
+    Side,
+};
 
 use super::{ball::Ball, paddle::Paddle, spawn_moveables, ScoreboardTextTag};
 
@@ -78,7 +81,10 @@ pub fn spawn_scoreboard_text(commands: &mut Commands, asset_server: &Res<AssetSe
                         "0  -  0",
                         TextStyle {
                             font_size: 64.0,
-                            font: asset_server.load("fonts/JetBrainsMono-Medium.ttf"),
+                            font: font::get_font(
+                                &asset_server,
+                                Fonts::MENU(MenuFontWeight::ExtraBold),
+                            ),
                             ..default()
                         },
                     )])
