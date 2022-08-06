@@ -1,6 +1,4 @@
 mod font;
-mod game;
-mod menu;
 mod plugins;
 mod util;
 
@@ -10,8 +8,8 @@ use bevy::{
     window::{PresentMode, WindowMode, WindowResizeConstraints},
 };
 
-use game::{ball::Ball, GamePlugin};
-use menu::MenuPlugin;
+use plugins::game::{ball::Ball, GamePlugin};
+use plugins::menu::MenuPlugin;
 use util::get_screen_dimensions;
 
 #[derive(Debug, Clone, PartialEq, Eq, Hash)]
