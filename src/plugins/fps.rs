@@ -97,19 +97,34 @@ fn spawn_text(mut commands: Commands, asset_server: Res<AssetServer>) {
     let font = asset_server.load("fonts//JetBrainsMono-Medium.ttf");
 
     commands
-        .spawn_bundle(TextBundle {
-            text: Text {
-                sections: vec![TextSection {
-                    value: STRING_INITIAL.to_string(),
-                    style: TextStyle {
-                        font,
-                        font_size: FONT_SIZE,
-                        color: FONT_COLOR,
-                    },
-                }],
-                ..Default::default()
+        .spawn_bundle(NodeBundle {
+            style: Style {
+                size: Size::new(Val::Percent(100.0), Val::Percent(100.0)),
+                display: Display::Flex,
+                padding: UiRect::new(Val::Undefined, Val::Px(32.0), Val::Px(32.0), Val::Undefined),
+                justify_content: JustifyContent::FlexEnd,
+                align_items: AlignItems::FlexEnd,
+                ..default()
             },
-            ..Default::default()
+            color: Color::NONE.into(),
+            ..default()
         })
-        .insert(ScreenDiagsText);
+        .with_children(|parent| {
+            parent
+                .spawn_bundle(TextBundle {
+                    text: Text {
+                        sections: vec![TextSection {
+                            value: STRING_INITIAL.to_string(),
+                            style: TextStyle {
+                                font,
+                                font_size: FONT_SIZE,
+                                color: FONT_COLOR,
+                            },
+                        }],
+                        ..Default::default()
+                    },
+                    ..Default::default()
+                })
+                .insert(ScreenDiagsText);
+        });
 }
