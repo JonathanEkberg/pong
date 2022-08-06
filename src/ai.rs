@@ -2,7 +2,7 @@ use bevy::prelude::*;
 
 use crate::{
     ball::Ball,
-    paddle::{Paddle, Player, PADDLE_ACCELERATION, PADDLE_MAX_SPEED},
+    paddle::{Paddle, Player, PADDLE_MAX_SPEED},
     util, Velocity,
 };
 
@@ -33,7 +33,10 @@ pub fn enemy_movement(
         Difficulty::LOW => ball_distance < quarter,
     };
 
-    if !ball_visible {
+    let ball_x = ball_trans.translation.x;
+    let enemy_x = enemy_trans.translation.x;
+
+    if !ball_visible || ball_x > enemy_x + (enemy_trans.scale.x / 1.8) {
         return enemy_vel.0.y = 0.;
     }
 
