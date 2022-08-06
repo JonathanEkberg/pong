@@ -1,9 +1,10 @@
 use bevy::prelude::*;
 
-use crate::{
+use crate::{util, Velocity};
+
+use super::{
     ball::Ball,
     paddle::{Paddle, Player, PADDLE_MAX_SPEED},
-    util, Velocity,
 };
 
 const DIFFICULTY: Difficulty = Difficulty::LOW;

@@ -1,11 +1,12 @@
-use crate::{
-    score::{self, ScoreEvent},
-    wall::Scoreable,
-    Ball, Velocity,
-};
+use crate::{Ball, Velocity};
 use bevy::{
     prelude::*,
     sprite::collide_aabb::{collide, Collision},
+};
+
+use super::{
+    score::{self, ScoreEvent},
+    wall::Scoreable,
 };
 
 #[derive(Component)]

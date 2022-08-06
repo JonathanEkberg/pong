@@ -6,6 +6,8 @@ use bevy::{
     utils::Duration,
 };
 
+use crate::font::{self, Fonts, FpsFontWeight};
+
 const FONT_SIZE: f32 = 32.0;
 const FONT_COLOR: Color = Color::WHITE;
 const UPDATE_INTERVAL: Duration = Duration::from_millis(250);
@@ -94,7 +96,7 @@ fn extract_fps(diagnostics: &Res<Diagnostics>) -> Option<f64> {
 }
 
 fn spawn_text(mut commands: Commands, asset_server: Res<AssetServer>) {
-    let font = asset_server.load("fonts//JetBrainsMono-Medium.ttf");
+    let font = font::get_font(&asset_server, Fonts::FPS(FpsFontWeight::Regular));
 
     commands
         .spawn_bundle(NodeBundle {

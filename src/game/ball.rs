@@ -1,7 +1,9 @@
 use bevy::prelude::*;
 use rand::{prelude::thread_rng, Rng};
 
-use crate::{collision::Collider, Velocity};
+use crate::Velocity;
+
+use super::collision::Collider;
 
 const BALL_SIZE: f32 = 20.0;
 pub const BALL_SPEED: f32 = 800.0;
